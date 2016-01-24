@@ -74,6 +74,11 @@ selectedChannel = 0
 muted = []
 armed = []
 
+var MODE_VOLUME = 0;
+var MODE_PAN = 1;
+
+var observed = [];
+
 function init()
 {
 	// Setup MIDI in stuff
@@ -134,6 +139,9 @@ function init()
         isOverdubActive = on;
    });
 
+	for (var i = 0; i<2; i++) { 
+		observed[i] = { values: [], changes: [], jumps: []}
+	}
 
 	// create a trackbank (arguments are tracks, sends, scenes)
 	trackBank = host.createTrackBankSection(NUM_TRACKS, NUM_SENDS, NUM_SCENES);
@@ -145,6 +153,8 @@ function init()
             sendMidi( FPads.Page2, PadIndex[col], on ? Colour.ORANGE : Colour.YELLOW_LOW  );
             
         }));
+	track.getVolume().addValueObserver(128, makeValueObserver(MODE_VOLUME, i));
+	track.getPan().addValueObserver(128, makeValueObserver(MODE_PAN, i));
         track.getArm().addValueObserver(makeIndexedFunction(i, function(col, on) {
             armed[ col ] = on;
             sendMidi( FPads.Page3, PadIndex[col], on ? Colour.RED_FULL : Colour.LIME );
@@ -158,6 +168,11 @@ function init()
         clipLauncher.addHasContentObserver( makeSlotIndexedFunction(i, function( track, slot, on ) {
             hasContent[ track * 8 + slot ] = on;     
         }));
+	
+	for (var j = 0; j < 2; j++) {
+		observed[j].changes[i] = false;
+		observed[j].jumps[i] = false;
+        }
     }
 
 	// create a cursor device to move about using the arrows
@@ -248,6 +263,17 @@ var incontrol_mix = true;
 var incontrol_knobs = true;
 var incontrol_pads = true;
 
+
+function makeValueObserver(type, index) {
+    return function(value) { 
+        if (! observed[type].changes[index]) {
+            observed[type].jumps[index] = true;
+        } else
+            observed[type].changes[index] = false;
+        observed[type].values[index] = value;
+    }
+}
+
 function onMidi(status, data1, data2)
 {
 	
@@ -279,12 +305,22 @@ function onMidi(status, data1, data2)
 
     }
 
-	if (status == FKnobs.Page1 && isTopRow( data1 )){
-		trackBank.getTrack( knobIndex( data1 )).getVolume().set(data2, 128);
-
+	if ( status == FKnobs.Page1 && isTopRow( data1 ) ) {
+		index = data1 - 21;
+		var diff = data2 - observed[MODE_VOLUME].values[index];
+            	if (! observed[MODE_VOLUME].jumps[index] || (Math.abs(diff) < 2)) {
+                	observed[MODE_VOLUME].changes[index] = true;
+                	observed[MODE_VOLUME].jumps[index] = false;
+			trackBank.getTrack( knobIndex( data1 )).getVolume().set(data2, 128);
+		}
 	} else if ( status == FKnobs.Page1 && isBottomRow( data1 )) {
-		trackBank.getTrack( knobIndex( data1 )).getPan().set(data2, 128);
-
+		index = data1 - 41;
+		var diff = data2 - observed[MODE_PAN].values[index];
+            	if (! observed[MODE_PAN].jumps[index] || (Math.abs(diff) < 2)) {
+                	observed[MODE_PAN].changes[index] = true;
+                	observed[MODE_PAN].jumps[index] = false;
+			trackBank.getTrack( knobIndex( data1 )).getPan().set(data2, 128);
+		}
 	} else if (status == FKnobs.Page2 && isTopRow( data1 )){
 		trackBank.getTrack( knobIndex( data1 )).getSend(0).set(data2, 128);
 
