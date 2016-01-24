@@ -1,8 +1,10 @@
-A Novation LaunchControl script for BitWig-Studio
+A Novation LaunchControl script for Bitwig-Studio
 ================================================
 
-The User-Pages emmit midi events that can be used to midi-learn the knobs and buttons to in Bitwig
-the script is based on the work of [eduk](https://github.com/educk)
+The User-Pages emmit midi events that can be used to midi-learn the knobs and buttons to in Bitwig.
+
+The script is based on the work of [eduk](https://github.com/educk)
+The knob takeover implementation is based on the work of [phaethon](https://github.com/phaethon)
 
 The Factory-Pages are mapped to the following functions:
 
