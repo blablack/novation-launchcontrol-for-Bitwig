@@ -7,27 +7,24 @@
 
 	The Factory-Pages are mapped to the following functions:
 
-	Factory-Page 1: 
+	Factory-Page 1 & 5: 
 		 the top row knobs control volume
 		 the lower row knobs controle pan
 		 the buttons are mapped to Play, Record, Writing Arranger Automation, Loop, Click, Launcher Overdub, Overdub
 
-	Factory-Page 2: 
+	Factory-Page 2 & 6: 
 		 the top row knobs control send1
 		 the lower row knobs controle send2
 		 the buttons are mapped to mute
 
-	Factory-Page 3: 
+	Factory-Page 3 & 7: 
 		 the left 8 knobs are mapped to Macro Functions
 		 the right 8 knobs are mapped to Device Parameters
 		 the buttons are mapped to record arm 
 
-	Factory-Page 3: 
+	Factory-Page 4 & 8: 
 		 the knobs aren't currently mapped
 		 the buttons create an empty clip on the next free slot of the selected Track. The button number is the clip lenght in bars
-
-	Since selecting the first few factory-pages can be a bit tricky when the launch-control is handled operated with the left hand (at least for me)
-	I also added a setting option in the scripts settings dialog that allows to reverse the Page mapping - so page 1 gets page 8, page 2 gets page 7, ...
 */
 
 loadAPI(1);
@@ -45,16 +42,7 @@ load("LaunchControl_common.js");
 
 var FPads = FactoryPagePads;
 var FKnobs = FactoryPageKnobs;
-var invertFactory = "no";
 
-canScrollTracksUp = false;
-canScrollTracksDown = false;
-canScrollScenesUp = false;
-canScrollScenesDown = false;
-canScrollLeft = false;
-canScrollRight = false;
-canScrollUp = false;
-canScrollDown = false;
 mixerAlignedGrid = false;
 
 currentScene = Scenes.FACTORY1;
@@ -82,21 +70,6 @@ function init()
 	// Setup MIDI in stuff
 	host.getMidiInPort(0).setMidiCallback(onMidi);
 	host.getMidiInPort(0).setSysexCallback(onSysex);
-
-	var es = host.getPreferences().getEnumSetting( "Invert", "GUI", ["yes", "no"], "no" );
-	es.addValueObserver(
-		function(val) {
-		  	println( "PREF CHANGE " + val );	  
-		  	invertFactory = val;
-		  	if ( val == "yes" ) {
-				FPads = FactoryPagePadsInverted;
-				FKnobs = FactoryPageKnobsInverted;
-		  	} else {
-				FPads = FactoryPagePads;
-				FKnobs = FactoryPageKnobs;
-		  	}
-		}
-	);
 
 	noteInput = host.getMidiInPort(0).createNoteInput("Launch Control", "80????", "90????");
 	noteInput.setShouldConsumeEvents(false);
@@ -169,7 +142,7 @@ function init()
 			observed[j].changes[i] = false;
 			observed[j].jumps[i] = false;
 	  	}
-	 }
+	}
 
 	// create a cursor device to move about using the arrows
 	cursorTrack = host.createCursorTrackSection(0, 8);
@@ -190,22 +163,6 @@ function init()
 		}
 	}
 	
-	trackBank.addCanScrollTracksUpObserver(function(canScroll) {
-		canScrollTracksUp = canScroll;
-	});
-
-	trackBank.addCanScrollTracksDownObserver(function(canScroll) {
-		canScrollTracksDown = canScroll;
-	});
-
-	cursorDevice.addCanSelectNextObserver(function(canScroll) {
-		canScrollScenesUp = canScroll;
-	});
-
-	cursorDevice.addCanSelectPreviousObserver(function(canScroll) {
-		canScrollScenesDown = canScroll;
-	});
-
 	// Call the update indicators function so that those rainbow indicators display
 	updateIndications();
 }
@@ -274,20 +231,16 @@ function makeValueObserver(type, index)
 
 function onMidi(status, data1, data2)
 {
-	if(status < 71 || status > 75) {
-		// sendMidi(status, data1, 60);
-	}
-	//If Side Buttons make red when pressed // Doesn't work for some reason
-	else if (data2 == 127) {
-		// sendMidi(status, 0x + data1, Colour.RED_FULL);
-	}
-	//Turn Off Side Buttons if not pressed.
-	else if (data2 == 0) {
-		//sendMidi(status, 0x + data1, Colour.OFF);	
+	if( data1 >= 114 && data1 <= 117 ) {
+		if (data2 == 127) {
+			sendMidi(status, data1, Colour.RED_FULL);
+		}
+		else if (data2 == 0) {
+			sendMidi(status, data1, Colour.OFF);	
+		}
 	}
 	
 	if (status == FPads.Page1 && data2 == 127) {
-	  	// Factory Preset 1 = Transport Controls and Parameter selector
 	  	handleFactory1Pads( data1 )
 	} 
 	else if (status == FPads.Page2 && data2 == 127) {
@@ -326,21 +279,17 @@ function onMidi(status, data1, data2)
 	} 
 	else if (status == FKnobs.Page3 && isTopRow( data1 )) {
 		var idx = knobIndex( data1 )
-		if ( idx < 4 ) {
+		if ( idx < 4 ) 
 			primaryDevice.getMacro( idx ).getAmount().set(data2, 128);
-		} 
-		else {
+		else
 			primaryDevice.getParameter( idx-4 ).set(data2, 128);
-	  	}
 	} 
 	else if (status == FKnobs.Page3 && isBottomRow( data1 )) {
 	  	var idx = knobIndex( data1 )
-	  	if ( idx < 4 ) {
+	  	if ( idx < 4 )
 			primaryDevice.getMacro( idx+4 ).getAmount().set(data2, 128);
-	  	} 
-		else {
+		else 
 			primaryDevice.getParameter( idx ).set(data2, 128);
-	 	}
 	} 
 	else {
 		// If not on a Factory Bank already assigned then make the knobs assignable and 
@@ -373,16 +322,16 @@ function onMidi(status, data1, data2)
 				else {
 			 		switch( data1 ) {
 			  			case SideButton.UP:
-							trackBank.scrollTracksPageUp();
-							break;
-			  			case SideButton.DOWN:
 							trackBank.scrollTracksPageDown();
 							break;
+			  			case SideButton.DOWN:
+							trackBank.scrollTracksPageUp();
+							break;
 			  			case SideButton.LEFT:
-						 	trackBank.scrollTracksPageLeft();
+						 	trackBank.scrollTracksUp();
 							break;
 			  			case SideButton.RIGHT:
-						 	trackBank.scrollTracksPageRight();
+							trackBank.scrollTracksDown();
 							break;
 					}
 				}
@@ -390,11 +339,10 @@ function onMidi(status, data1, data2)
 			// Make rest of the knobs not in the Factory bank freely assignable
 			else if (data1 >= LOWEST_CC && data1 <= HIGHEST_CC) {
 				var index = data1 - LOWEST_CC + (HIGHEST_CC * MIDIChannel(status));
-				userControls.getControl(index).set(data2, 128);
+				if( userControls.getControl(index) != null ) userControls.getControl(index).set(data2, 128);
 			}
 		}
 	}
-	updateOutputState();
 }
 
 
@@ -413,35 +361,10 @@ function knobIndex( knob )
 	return knob -( isTopRow( knob ) ? 21 : 41 );
 }
 
-//Works
 function exit() 
 {
 	sendMidi(0xB8, 0x00, 0x00);
 }
-
-function updateScrollButtons() 
-{
-	setSideLED(0, canScrollUp ? Colour.RED_FULL : Colour.RED_FULL);
-	setSideLED(1, canScrollDown ? Colour.RED_FULL : Colour.OFF);
-	setSideLED(2, canScrollLeft ? Colour.RED_FULL : Colour.OFF);
-	setSideLED(3, canScrollRight ? Colour.RED_FULL : Colour.OFF);
-}
-
-function setSideLED(index, colour) {
- 	sendMidi(0xb8, (72 + index), colour);
-}
-
-function updateOutputState()
-{
-	clear();
-
-	canScrollUp = mixerAlignedGrid ? canScrollScenesUp : canScrollTracksUp;
-	canScrollDown = mixerAlignedGrid ? canScrollScenesDown : canScrollTracksDown;
-	canScrollLeft = mixerAlignedGrid ? canScrollScenesUp : canScrollTracksUp;
-	canScrollRight = mixerAlignedGrid ? canScrollScenesDown : canScrollTracksDown;
-
-	updateScrollButtons();
-};
 
 function handleFactory1Pads( pad ) 
 {
@@ -501,10 +424,8 @@ function handleFactory4Pads( pad )
 	  	}
 	}	 
 
-	println( emptySlot )
-	
 	if ( emptySlot == -1 ) {
-	  	return
+	  	return;
 	} 
 	else {
 		var idx = PadIndex.indexOf( pad );
@@ -515,12 +436,11 @@ function handleFactory4Pads( pad )
 function onSysex(data) 
 {
 	if ( data.substring(0,14) == 'f0002029020a77' ) {
-		currentScene = parseInt( data.substring(14,16), 16)	  
+		currentScene = parseInt( data.substring(14,16), 16);
 	  
-	  	if ( currentScene >= 8 && invertFactory == "yes" ) {
-			currentScene = 15 - (currentScene -8);
-	  	}
-	 
+		if( currentScene >= 12)
+			currentScene = currentScene - 4;
+	  	
 	  	if ( currentScene == Scenes.FACTORY3 ) {
 			mixerAlignedGrid = false;
 		  	incontrol_mix = false;		  
@@ -530,7 +450,30 @@ function onSysex(data)
 			mixerAlignedGrid = true;
 			incontrol_mix = true;
 	  	}
-	  
+
+		if( currentScene >= 0 && currentScene <= 7 ) {
+			host.showPopupNotification("User " + (currentScene + 1));
+		}
+		else {
+			switch( currentScene ) {
+				case 8:
+					host.showPopupNotification("Transport, Volumes & Pans");
+					break;
+
+				case 9:
+					host.showPopupNotification("Mutes, Sends 1 & 2");
+					break;
+
+				case 10:
+					host.showPopupNotification("Records, Macros and Devices");
+					break;
+
+				case 11:
+					host.showPopupNotification("Create free slots");
+					break;
+			}
+		}
+
 		updateIndications();
 	}
 }
