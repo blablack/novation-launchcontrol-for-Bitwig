@@ -37,7 +37,7 @@ host.addDeviceNameBasedDiscoveryPair(["Launch Control MIDI 1"], ["Launch Control
 
 //Load LaunchControl constants containing the status for pages and other constant variables
 load("LaunchControl_constants.js");
-load("LaunchControl_common.js");
+//load("LaunchControl_common.js");
 
 
 var FPads = FactoryPagePads;
