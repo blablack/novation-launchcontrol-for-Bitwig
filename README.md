@@ -28,6 +28,4 @@ Factory-Page 4 & 8:
  * the knobs aren't currently mapped
  * the buttons create an empty clip on the next free slot of the selected Track. The button number is the clip lenght in bars
 
-Since selecting the first few factory-pages can be a bit tricky when the launch-control is handled operated with the left hand (at least for me)
-I also added a setting option in the scripts settings dialog that allows to reverse the Page mapping - so page 1 gets page 8, page 2 gets page 7, ...
 
