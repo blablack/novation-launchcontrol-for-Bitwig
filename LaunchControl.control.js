@@ -166,8 +166,6 @@ function init()
 	
 	// Call the update indicators function so that those rainbow indicators display
 	updateIndications();
-
-	exit();
 }
 
 // This updates the indicators (rainbow things) 
@@ -366,8 +364,22 @@ function knobIndex( knob )
 
 function exit() 
 {
-	//sendMidi(0xB8, 0, 0);
  	sendMidi(0xB0, 0, 0);
+ 	sendMidi(0xB1, 0, 0);
+ 	sendMidi(0xB2, 0, 0);
+ 	sendMidi(0xB3, 0, 0);
+ 	sendMidi(0xB4, 0, 0);
+ 	sendMidi(0xB5, 0, 0);
+ 	sendMidi(0xB7, 0, 0);
+
+	sendMidi(0xB8, 0, 0);
+	sendMidi(0xB9, 0, 0);
+	sendMidi(0xBA, 0, 0);
+	sendMidi(0xBB, 0, 0);
+	sendMidi(0xBC, 0, 0);
+	sendMidi(0xBD, 0, 0);
+	sendMidi(0xBE, 0, 0);
+	sendMidi(0xBF, 0, 0);
 }
 
 function handleFactory1Pads( pad ) 
