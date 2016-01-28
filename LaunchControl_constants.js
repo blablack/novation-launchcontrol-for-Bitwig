@@ -53,6 +53,7 @@ var SideButton = {
 	RIGHT:117,
 };
 
+/*
 var UserPageKnobs = {
 	Page1:176,
 	Page2:177,
@@ -63,6 +64,7 @@ var UserPageKnobs = {
 	Page7:182,
 	Page8:183
 };
+*/
 
 var FactoryPageKnobs = {
 	Page1:184,
@@ -75,6 +77,7 @@ var FactoryPageKnobs = {
 	Page8:191
 };
 
+/*
 var FactoryPageKnobsInverted = {
 	Page1:191,
 	Page2:190,
@@ -85,8 +88,9 @@ var FactoryPageKnobsInverted = {
 	Page7:185,
 	Page8:184
 };
+*/
 
-
+/*
 var UserPagePads = {
 	Page1:144,
 	Page2:145,
@@ -97,6 +101,7 @@ var UserPagePads = {
 	Page7:150,
 	Page8:151
 };
+*/
 
 var FactoryPagePads = {
 	Page1:152,
@@ -109,6 +114,7 @@ var FactoryPagePads = {
 	Page8:159
 };
 
+/*
 var FactoryPagePadsInverted = {
 	Page1:159,
 	Page2:158,
@@ -119,6 +125,7 @@ var FactoryPagePadsInverted = {
 	Page7:153,
 	Page8:152
 };
+*/
 
 var Colour = {
 	OFF:12,
@@ -138,6 +145,7 @@ var Colour = {
 	GREEN_FLASHING:56
 };
 
+/*
 var LED = {
 	GRID:0,
 	CURSORS:1,
@@ -145,6 +153,7 @@ var LED = {
 	CURSOR_UP:0,
 	CURSOR_DOWN:1,
 	CURSOR_LEFT:2,
-	CURSOR_RIGHT:3,
+	CURSOR_RIGHT:3
 };
+*/
 
