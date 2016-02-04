@@ -79,35 +79,43 @@ function init()
 	// create a transport for on Factory Preset 1
 	transport = host.createTransport();
 	sendMidi( FactoryPagePads.Page1, Pads.PAD1, Colour.YELLOW_LOW );
+	sendMidi( FactoryPagePads.Page5, Pads.PAD1, Colour.YELLOW_LOW );
 
 	transport.addIsPlayingObserver(function(on) {
 	  	sendMidi( FactoryPagePads.Page1, Pads.PAD2,  on ? Colour.LIME : Colour.GREEN_LOW );
+	  	sendMidi( FactoryPagePads.Page5, Pads.PAD2,  on ? Colour.LIME : Colour.GREEN_LOW );
 	  	isPlaying = on;
 	});
 	transport.addIsRecordingObserver(function(on) {
 	  	sendMidi( FactoryPagePads.Page1, Pads.PAD3,  on ? Colour.RED_FULL : Colour.RED_LOW );
+	  	sendMidi( FactoryPagePads.Page5, Pads.PAD3,  on ? Colour.RED_FULL : Colour.RED_LOW );
 	  	isRecording = on;
 	});
 	transport.addIsWritingArrangerAutomationObserver(function(on) {
 	  	sendMidi( FactoryPagePads.Page1, Pads.PAD4,  on ? Colour.RED_FULL : Colour.OFF );
+	  	sendMidi( FactoryPagePads.Page5, Pads.PAD4,  on ? Colour.RED_FULL : Colour.OFF );
 	  	isWritingArrangerAutomation = on;
 	});
 
 	transport.addIsLoopActiveObserver(function(on) {
 	  	sendMidi( FactoryPagePads.Page1, Pads.PAD5,  on ? Colour.ORANGE : Colour.OFF );
+	  	sendMidi( FactoryPagePads.Page5, Pads.PAD5,  on ? Colour.ORANGE : Colour.OFF );
 	  	isLoopActive = on;
 	});
 	transport.addClickObserver(function(on) {
 	  	sendMidi( FactoryPagePads.Page1, Pads.PAD6,  on ? Colour.ORANGE : Colour.OFF );
+	  	sendMidi( FactoryPagePads.Page5, Pads.PAD6,  on ? Colour.ORANGE : Colour.OFF );
 	  	isClickActive = on;
 	});
 	transport.addLauncherOverdubObserver(function(on) {
 	  	sendMidi( FactoryPagePads.Page1, Pads.PAD7,  on ? Colour.RED_FULL : Colour.OFF );
+	  	sendMidi( FactoryPagePads.Page5, Pads.PAD7,  on ? Colour.RED_FULL : Colour.OFF );
 	  	isLauncherOverdubActive = on;
 	});
 
 	transport.addOverdubObserver(function(on) {
 	  	sendMidi( FactoryPagePads.Page1, Pads.PAD8,  on ? Colour.ORANGE : Colour.OFF );
+	  	sendMidi( FactoryPagePads.Page5, Pads.PAD8,  on ? Colour.ORANGE : Colour.OFF );
 	  	isOverdubActive = on;
 	});
 
@@ -122,12 +130,14 @@ function init()
 	  	track.getMute().addValueObserver(makeIndexedFunction(i, function(col, on) {
 			muted[ col ] = on;
 			sendMidi( FactoryPagePads.Page2, PadIndex[col], on ? Colour.ORANGE : Colour.YELLOW_LOW  );
+			sendMidi( FactoryPagePads.Page6, PadIndex[col], on ? Colour.ORANGE : Colour.YELLOW_LOW  );
 		}));
 		track.getVolume().addValueObserver(128, makeValueObserver(MODE_VOLUME, i));
 		track.getPan().addValueObserver(128, makeValueObserver(MODE_PAN, i));
 		track.getArm().addValueObserver(makeIndexedFunction(i, function(col, on) {
 			armed[ col ] = on;
 			sendMidi( FactoryPagePads.Page3, PadIndex[col], on ? Colour.RED_FULL : Colour.LIME );
+			sendMidi( FactoryPagePads.Page7, PadIndex[col], on ? Colour.RED_FULL : Colour.LIME );
 		}));
 		track.addIsSelectedInMixerObserver( makeIndexedFunction(i, function( col, on ) { 
 			if ( on ) {
@@ -253,20 +263,20 @@ function onMidi(status, data1, data2)
 		}
 	}
 	
-	if (status == FactoryPagePads.Page1 && data2 == 127) {
+	if ((status == FactoryPagePads.Page1 || status == FactoryPagePads.Page5) && data2 == 127) {
 	  	handleFactory1Pads( data1 )
 	} 
-	else if (status == FactoryPagePads.Page2 && data2 == 127) {
+	else if ((status == FactoryPagePads.Page2 || status == FactoryPagePads.Page6) && data2 == 127) {
 		handleFactory2Pads( data1 )
 	} 
-	else if (status == FactoryPagePads.Page3 && data2 == 127) {
+	else if ((status == FactoryPagePads.Page3 || status == FactoryPagePads.Page7) && data2 == 127) {
 		handleFactory3Pads( data1 )
 	} 
-	else if (status == FactoryPagePads.Page4 && data2 == 127) {
+	else if ((status == FactoryPagePads.Page4 || status == FactoryPagePads.Page8) && data2 == 127) {
 	  	handleFactory4Pads( data1 )
 	}
 
-	if ( status == FactoryPageKnobs.Page1 && isTopRow( data1 ) ) {
+	if ( (status == FactoryPageKnobs.Page1 || status == FactoryPageKnobs.Page5) && isTopRow( data1 ) ) {
 		index = data1 - 21;
 		var diff = data2 - observed[MODE_VOLUME].values[index];
 		if (! observed[MODE_VOLUME].jumps[index] || (Math.abs(diff) < 2)) {
@@ -275,7 +285,7 @@ function onMidi(status, data1, data2)
 			trackBank.getTrack( knobIndex( data1 )).getVolume().set(data2, 128);
 		}
 	} 
-	else if ( status == FactoryPageKnobs.Page1 && isBottomRow( data1 )) {
+	else if ( (status == FactoryPageKnobs.Page1 || status == FactoryPageKnobs.Page5) && isBottomRow( data1 )) {
 		index = data1 - 41;
 		var diff = data2 - observed[MODE_PAN].values[index];
 		if (! observed[MODE_PAN].jumps[index] || (Math.abs(diff) < 2)) {
@@ -284,20 +294,20 @@ function onMidi(status, data1, data2)
 			trackBank.getTrack( knobIndex( data1 )).getPan().set(data2, 128);
 		}
 	} 
-	else if (status == FactoryPageKnobs.Page2 && isTopRow( data1 )) {
+	else if ( (status == FactoryPageKnobs.Page2 || status == FactoryPageKnobs.Page6) && isTopRow( data1 )) {
 		trackBank.getTrack( knobIndex( data1 )).getSend(0).set(data2, 128);
 	} 
-	else if ( status == FactoryPageKnobs.Page2 && isBottomRow( data1 )) {
+	else if ( (status == FactoryPageKnobs.Page2 || status == FactoryPageKnobs.Page6) && isBottomRow( data1 )) {
 		trackBank.getTrack( knobIndex( data1 )).getSend(1).set(data2, 128);
 	} 
-	else if (status == FactoryPageKnobs.Page3 && isTopRow( data1 )) {
+	else if ( (status == FactoryPageKnobs.Page3 || status == FactoryPageKnobs.Page7) && isTopRow( data1 )) {
 		var idx = knobIndex( data1 )
 		if ( idx < 4 ) 
 			primaryDevice.getMacro( idx ).getAmount().set(data2, 128);
 		else
 			primaryDevice.getParameter( idx-4 ).set(data2, 128);
 	} 
-	else if (status == FactoryPageKnobs.Page3 && isBottomRow( data1 )) {
+	else if ( (status == FactoryPageKnobs.Page3 || status == FactoryPageKnobs.Page7) && isBottomRow( data1 )) {
 	  	var idx = knobIndex( data1 )
 	  	if ( idx < 4 )
 			primaryDevice.getMacro( idx+4 ).getAmount().set(data2, 128);
