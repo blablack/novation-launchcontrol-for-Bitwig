@@ -194,20 +194,32 @@ function updateIndications()
 		sendMidi( FactoryPagePads.Page1, Pads.PAD6, isClickActive ? Colour.ORANGE : Colour.OFF );
 		sendMidi( FactoryPagePads.Page1, Pads.PAD7, isLauncherOverdubActive ? Colour.RED_FULL : Colour.OFF );
 		sendMidi( FactoryPagePads.Page1, Pads.PAD8, isOverdubActive ? Colour.ORANGE : Colour.OFF );
+
+		sendMidi( FactoryPagePads.Page5, Pads.PAD1, Colour.YELLOW_LOW );
+		sendMidi( FactoryPagePads.Page5, Pads.PAD2, isPlaying ? Colour.LIME : Colour.GREEN_LOW );
+		sendMidi( FactoryPagePads.Page5, Pads.PAD3, isRecording ? Colour.RED_FULL : Colour.RED_LOW );
+		sendMidi( FactoryPagePads.Page5, Pads.PAD4, isWritingArrangerAutomation ? Colour.RED_FULL : Colour.OFF );
+		sendMidi( FactoryPagePads.Page5, Pads.PAD5, isLoopActive ? Colour.ORANGE : Colour.OFF );
+		sendMidi( FactoryPagePads.Page5, Pads.PAD6, isClickActive ? Colour.ORANGE : Colour.OFF );
+		sendMidi( FactoryPagePads.Page5, Pads.PAD7, isLauncherOverdubActive ? Colour.RED_FULL : Colour.OFF );
+		sendMidi( FactoryPagePads.Page5, Pads.PAD8, isOverdubActive ? Colour.ORANGE : Colour.OFF );
 	} 
 	else if ( currentScene == Scenes.FACTORY2 ) {
 		for ( var i=0; i<8; i++) {
 			sendMidi( FactoryPagePads.Page2, PadIndex[i], muted[ i ]  ?  Colour.ORANGE : Colour.YELLOW_LOW  );
+			sendMidi( FactoryPagePads.Page6, PadIndex[i], muted[ i ]  ?  Colour.ORANGE : Colour.YELLOW_LOW  );
 		}
 	} 
 	else if ( currentScene == Scenes.FACTORY3 ) {
 		for ( var i=0; i<8; i++) {
 			sendMidi( FactoryPagePads.Page3, PadIndex[i], armed[ i ]  ?  Colour.RED_FULL : Colour.LIME  );
+			sendMidi( FactoryPagePads.Page7, PadIndex[i], armed[ i ]  ?  Colour.RED_FULL : Colour.LIME  );
 		}
 	} 
 	else if ( currentScene == Scenes.FACTORY4 ) {
 		for ( var i=0; i<8; i++) {
 			sendMidi( FactoryPagePads.Page4, PadIndex[i], Colour.RED_LOW );
+			sendMidi( FactoryPagePads.Page8, PadIndex[i], Colour.RED_LOW );
 		}
  	}
 }
@@ -453,7 +465,7 @@ function onSysex(data)
 {
 	if ( data.substring(0,14) == 'f0002029020a77' ) {
 		currentScene = parseInt( data.substring(14,16), 16);
-	  
+
 		if( currentScene >= 12)
 			currentScene = currentScene - 4;
 	  	
