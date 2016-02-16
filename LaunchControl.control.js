@@ -75,6 +75,8 @@ function init()
 
 	noteInput = host.getMidiInPort(0).createNoteInput("Launch Control", "80????", "90????");
 	noteInput.setShouldConsumeEvents(false);
+
+	animateLogo();
 	
 	// create a transport for on Factory Preset 1
 	transport = host.createTransport();
@@ -173,9 +175,133 @@ function init()
 			userControls.getControl(c).setLabel("CC " + i + " - Channel " + j);
 		}
 	}
-	
-	// Call the update indicators function so that those rainbow indicators display
-	updateIndications();
+}
+
+function animateLogoPad( Page )
+{
+	switch(logoPhase) {
+			case 0:
+				sendMidi( Page, Pads.PAD1, Colour.RED_FULL );
+				sendMidi( Page, Pads.PAD2, Colour.OFF );
+				sendMidi( Page, Pads.PAD3, Colour.OFF );
+				sendMidi( Page, Pads.PAD4, Colour.OFF );
+				sendMidi( Page, Pads.PAD5, Colour.OFF );
+				sendMidi( Page, Pads.PAD6, Colour.OFF );
+				sendMidi( Page, Pads.PAD7, Colour.OFF );
+				sendMidi( Page, Pads.PAD8, Colour.LIME );
+				break;
+			case 1:
+				sendMidi( Page, Pads.PAD1, Colour.OFF );
+				sendMidi( Page, Pads.PAD2, Colour.RED_FULL );
+				sendMidi( Page, Pads.PAD3, Colour.OFF );
+				sendMidi( Page, Pads.PAD4, Colour.OFF );
+				sendMidi( Page, Pads.PAD5, Colour.OFF );
+				sendMidi( Page, Pads.PAD6, Colour.OFF );
+				sendMidi( Page, Pads.PAD7, Colour.LIME );
+				sendMidi( Page, Pads.PAD8, Colour.OFF );
+				break;
+			case 2:
+				sendMidi( Page, Pads.PAD1, Colour.OFF );
+				sendMidi( Page, Pads.PAD2, Colour.OFF );
+				sendMidi( Page, Pads.PAD3, Colour.RED_FULL );
+				sendMidi( Page, Pads.PAD4, Colour.OFF );
+				sendMidi( Page, Pads.PAD5, Colour.OFF );
+				sendMidi( Page, Pads.PAD6, Colour.LIME );
+				sendMidi( Page, Pads.PAD7, Colour.OFF );
+				sendMidi( Page, Pads.PAD8, Colour.OFF );
+				break;
+			case 3:
+				sendMidi( Page, Pads.PAD1, Colour.OFF );
+				sendMidi( Page, Pads.PAD2, Colour.OFF );
+				sendMidi( Page, Pads.PAD3, Colour.OFF );
+				sendMidi( Page, Pads.PAD4, Colour.RED_FULL );
+				sendMidi( Page, Pads.PAD5, Colour.LIME );
+				sendMidi( Page, Pads.PAD6, Colour.OFF );
+				sendMidi( Page, Pads.PAD7, Colour.OFF );
+				sendMidi( Page, Pads.PAD8, Colour.OFF );
+				break;
+			case 4:
+				sendMidi( Page, Pads.PAD1, Colour.OFF );
+				sendMidi( Page, Pads.PAD2, Colour.OFF );
+				sendMidi( Page, Pads.PAD3, Colour.OFF );
+				sendMidi( Page, Pads.PAD4, Colour.LIME );
+				sendMidi( Page, Pads.PAD5, Colour.RED_FULL );
+				sendMidi( Page, Pads.PAD6, Colour.OFF );
+				sendMidi( Page, Pads.PAD7, Colour.OFF );
+				sendMidi( Page, Pads.PAD8, Colour.OFF );
+				break;
+			case 5:
+				sendMidi( Page, Pads.PAD1, Colour.OFF );
+				sendMidi( Page, Pads.PAD2, Colour.OFF );
+				sendMidi( Page, Pads.PAD3, Colour.LIME );
+				sendMidi( Page, Pads.PAD4, Colour.OFF );
+				sendMidi( Page, Pads.PAD5, Colour.OFF );
+				sendMidi( Page, Pads.PAD6, Colour.RED_FULL );
+				sendMidi( Page, Pads.PAD7, Colour.OFF );
+				sendMidi( Page, Pads.PAD8, Colour.OFF );
+				break;
+			case 6:
+				sendMidi( Page, Pads.PAD1, Colour.OFF );
+				sendMidi( Page, Pads.PAD2, Colour.LIME );
+				sendMidi( Page, Pads.PAD3, Colour.OFF );
+				sendMidi( Page, Pads.PAD4, Colour.OFF );
+				sendMidi( Page, Pads.PAD5, Colour.OFF );
+				sendMidi( Page, Pads.PAD6, Colour.OFF );
+				sendMidi( Page, Pads.PAD7, Colour.RED_FULL );
+				sendMidi( Page, Pads.PAD8, Colour.OFF );
+				break;
+			case 7:
+				sendMidi( Page, Pads.PAD1, Colour.LIME );
+				sendMidi( Page, Pads.PAD2, Colour.OFF );
+				sendMidi( Page, Pads.PAD3, Colour.OFF );
+				sendMidi( Page, Pads.PAD4, Colour.OFF );
+				sendMidi( Page, Pads.PAD5, Colour.OFF );
+				sendMidi( Page, Pads.PAD6, Colour.OFF );
+				sendMidi( Page, Pads.PAD7, Colour.OFF );
+				sendMidi( Page, Pads.PAD8, Colour.RED_FULL );
+				break;
+			case 8:
+				sendMidi( Page, Pads.PAD1, Colour.OFF );
+				sendMidi( Page, Pads.PAD2, Colour.OFF );
+				sendMidi( Page, Pads.PAD3, Colour.OFF );
+				sendMidi( Page, Pads.PAD4, Colour.OFF );
+				sendMidi( Page, Pads.PAD5, Colour.OFF );
+				sendMidi( Page, Pads.PAD6, Colour.OFF );
+				sendMidi( Page, Pads.PAD7, Colour.OFF );
+				sendMidi( Page, Pads.PAD8, Colour.OFF );
+				break;
+		}
+}
+
+var logoPhase = 0;
+var logoStep = 0;
+function animateLogo()
+{
+	if (logoStep > 6) {
+		// Call the update indicators function so that those rainbow indicators display
+		updateIndications();
+		return;
+   	}
+   	else {
+		animateLogoPad( FactoryPagePads.Page1 );
+		animateLogoPad( FactoryPagePads.Page2 );
+		animateLogoPad( FactoryPagePads.Page3 );
+		animateLogoPad( FactoryPagePads.Page4 );
+		animateLogoPad( FactoryPagePads.Page5 );
+		animateLogoPad( FactoryPagePads.Page6 );
+		animateLogoPad( FactoryPagePads.Page7 );
+		animateLogoPad( FactoryPagePads.Page8 );
+	}
+
+	if( logoStep == 0 || logoStep == 2 || logoStep == 4 || logoStep == 6 || logoStep == 8 )
+		logoPhase++;
+	else
+		logoPhase--;
+
+	if (logoPhase > 7 || logoPhase < 0)
+		logoStep++
+
+	host.scheduleTask(animateLogo, null, 125);
 }
 
 // This updates the indicators (rainbow things) 
@@ -216,6 +342,7 @@ function updateIndications()
 	} 
 	else if ( currentScene == Scenes.FACTORY2 ) {
 		for ( var i=0; i<8; i++) {
+			println("test");
 			sendMidi( FactoryPagePads.Page2, PadIndex[i], muted[ i ]  ?  Colour.ORANGE : Colour.YELLOW_LOW  );
 			sendMidi( FactoryPagePads.Page6, PadIndex[i], muted[ i ]  ?  Colour.ORANGE : Colour.YELLOW_LOW  );
 		}
@@ -236,8 +363,6 @@ function updateIndications()
 
 
 var incontrol_mix = true;
-//var incontrol_knobs = true;
-//var incontrol_pads = true;
 
 
 function makeValueObserver(type, index) 
