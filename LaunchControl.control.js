@@ -37,15 +37,6 @@ host.addDeviceNameBasedDiscoveryPair(["Launch Control MIDI 1"], ["Launch Control
 
 //Load LaunchControl constants containing the status for pages and other constant variables
 load("LaunchControl_constants.js");
-//load("LaunchControl_common.js");
-
-
-/*
-var FactoryPagePads = FactoryPagePads;
-var FactoryPageKnobs = FactoryPageKnobs;
-*/
-
-mixerAlignedGrid = false;
 
 currentScene = Scenes.FACTORY1;
 
@@ -75,6 +66,8 @@ function init()
 
 	noteInput = host.getMidiInPort(0).createNoteInput("Launch Control", "80????", "90????");
 	noteInput.setShouldConsumeEvents(false);
+
+	resetDevice();
 
 	animateLogo();
 	
@@ -277,7 +270,7 @@ var logoPhase = 0;
 var logoStep = 0;
 function animateLogo()
 {
-	if (logoStep > 6) {
+	if (logoStep > 1) {
 		// Call the update indicators function so that those rainbow indicators display
 		updateIndications();
 		return;
@@ -509,8 +502,10 @@ function knobIndex( knob )
 	return knob -( isTopRow( knob ) ? 21 : 41 );
 }
 
-function exit() 
+function resetDevice()
 {
+	sendSysex("F0002029020A7708F7");
+
  	sendMidi(0xB0, 0, 0);
  	sendMidi(0xB1, 0, 0);
  	sendMidi(0xB2, 0, 0);
@@ -527,6 +522,11 @@ function exit()
 	sendMidi(0xBD, 0, 0);
 	sendMidi(0xBE, 0, 0);
 	sendMidi(0xBF, 0, 0);
+}
+
+function exit() 
+{
+	resetDevice();
 }
 
 function handleFactory1Pads( pad ) 
@@ -604,15 +604,11 @@ function onSysex(data)
 		if( currentScene >= 12)
 			currentScene = currentScene - 4;
 	  	
-	  	if ( currentScene == Scenes.FACTORY3 ) {
-			mixerAlignedGrid = false;
+	  	if ( currentScene == Scenes.FACTORY3 )
 		  	incontrol_mix = false;		  
-	  	}
 	  
-	  	if ( currentScene == Scenes.FACTORY1 || currentScene == Scenes.FACTORY2 || currentScene == Scenes.FACTORY4) {
-			mixerAlignedGrid = true;
+	  	if ( currentScene == Scenes.FACTORY1 || currentScene == Scenes.FACTORY2 || currentScene == Scenes.FACTORY4)
 			incontrol_mix = true;
-	  	}
 
 		if( currentScene >= 0 && currentScene <= 7 ) {
 			host.showPopupNotification("User " + (currentScene + 1));
