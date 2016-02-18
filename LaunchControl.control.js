@@ -113,7 +113,7 @@ function init()
 	  	sendMidi( FactoryPagePads.Page5, Pads.PAD8,  on ? Colour.ORANGE : Colour.OFF );
 	  	isOverdubActive = on;
 	});
-
+	
 	for (var i = 0; i<2; i++) { 
 		observed[i] = { values: [], changes: [], jumps: []}
 	}
@@ -335,7 +335,6 @@ function updateIndications()
 	} 
 	else if ( currentScene == Scenes.FACTORY2 ) {
 		for ( var i=0; i<8; i++) {
-			println("test");
 			sendMidi( FactoryPagePads.Page2, PadIndex[i], muted[ i ]  ?  Colour.ORANGE : Colour.YELLOW_LOW  );
 			sendMidi( FactoryPagePads.Page6, PadIndex[i], muted[ i ]  ?  Colour.ORANGE : Colour.YELLOW_LOW  );
 		}
@@ -437,45 +436,20 @@ function onMidi(status, data1, data2)
 		// assign those arrows on the right of the control to move around the tracks and devices on the screen
 		if (isChannelController(status)) {
 			if (data2 == 127) {
-				if (!incontrol_mix) {
-			 		switch( data1 ) {
-			  			case SideButton.UP:
-							primaryDevice.previousParameterPage();
-					 		updateIndications();
-							break;
-			  			case SideButton.DOWN:
-							primaryDevice.nextParameterPage();
-							updateIndications();
-							break;
-						case SideButton.LEFT:
-							cursorDevice.selectPrevious();
-							primaryDevice.switchToDevice( DeviceType.ANY, ChainLocation.PREVIOUS);
-							updateIndications();
-					 		break;
-			  			case SideButton.RIGHT:
-							cursorDevice.selectNext();
-							primaryDevice.switchToDevice( DeviceType.ANY, ChainLocation.NEXT);
-							updateIndications();
-							break;
-			 		}
-			  
-				} 
-				else {
-			 		switch( data1 ) {
-			  			case SideButton.UP:
-							trackBank.scrollTracksPageDown();
-							break;
-			  			case SideButton.DOWN:
-							trackBank.scrollTracksPageUp();
-							break;
-			  			case SideButton.LEFT:
-						 	trackBank.scrollTracksUp();
-							break;
-			  			case SideButton.RIGHT:
-							trackBank.scrollTracksDown();
-							break;
+		 		switch( data1 ) {
+		  			case SideButton.UP:
+						trackBank.scrollTracksPageDown();
+						break;
+		  			case SideButton.DOWN:
+						trackBank.scrollTracksPageUp();
+						break;
+		  			case SideButton.LEFT:
+					 	trackBank.scrollTracksUp();
+						break;
+		  			case SideButton.RIGHT:
+						trackBank.scrollTracksDown();
+						break;
 					}
-				}
 			}
 			// Make rest of the knobs not in the Factory bank freely assignable
 			else if (data1 >= LOWEST_CC && data1 <= HIGHEST_CC) {
