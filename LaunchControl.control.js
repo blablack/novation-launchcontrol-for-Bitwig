@@ -77,7 +77,31 @@ function init()
 	noteInput.setShouldConsumeEvents(false);
 
 	animateLogo();
-	
+
+	var docState = host.getDocumentState();
+	modeSetting = docState.getEnumSetting("Mode", "Mode", ["Transport/Vol/Pan", "Mute/Send 1&2", "Rec/Macro Func/Device Par", "Create Empty Clip"], "Transport/Vol/Pan");
+	modeSetting.addValueObserver(function(value)
+	{
+		if (value.equals("Transport/Vol/Pan"))
+		{
+			currentScene = 8;
+		}
+		else if (value.equals("Mute/Send 1&2"))
+		{
+			currentScene = 9;
+      		}
+		else if (value.equals("Rec/Macro Func/Device Par"))
+		{
+			currentScene = 10;
+      		}
+		else if (value.equals("Create Empty Clip"))
+		{
+			currentScene = 11;
+      		}
+		updateIndications();
+	});
+
+
 	// create a transport for on Factory Preset 1
 	transport = host.createTransport();
 	sendMidi( FactoryPagePads.Page1, Pads.PAD1, Colour.YELLOW_LOW );
