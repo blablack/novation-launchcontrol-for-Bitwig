@@ -37,15 +37,6 @@ host.addDeviceNameBasedDiscoveryPair(["Launch Control MIDI 1"], ["Launch Control
 
 //Load LaunchControl constants containing the status for pages and other constant variables
 load("LaunchControl_constants.js");
-//load("LaunchControl_common.js");
-
-
-/*
-var FactoryPagePads = FactoryPagePads;
-var FactoryPageKnobs = FactoryPageKnobs;
-*/
-
-mixerAlignedGrid = false;
 
 currentScene = Scenes.FACTORY1;
 
@@ -75,6 +66,8 @@ function init()
 
 	noteInput = host.getMidiInPort(0).createNoteInput("Launch Control", "80????", "90????");
 	noteInput.setShouldConsumeEvents(false);
+
+	resetDevice();
 
 	animateLogo();
 
@@ -144,7 +137,7 @@ function init()
 	  	sendMidi( FactoryPagePads.Page5, Pads.PAD8,  on ? Colour.ORANGE : Colour.OFF );
 	  	isOverdubActive = on;
 	});
-
+	
 	for (var i = 0; i<2; i++) { 
 		observed[i] = { values: [], changes: [], jumps: []}
 	}
@@ -301,7 +294,7 @@ var logoPhase = 0;
 var logoStep = 0;
 function animateLogo()
 {
-	if (logoStep > 6) {
+	if (logoStep > 1) {
 		// Call the update indicators function so that those rainbow indicators display
 		updateIndications();
 		return;
@@ -366,7 +359,6 @@ function updateIndications()
 	} 
 	else if ( currentScene == Scenes.FACTORY2 ) {
 		for ( var i=0; i<8; i++) {
-			println("test");
 			sendMidi( FactoryPagePads.Page2, PadIndex[i], muted[ i ]  ?  Colour.ORANGE : Colour.YELLOW_LOW  );
 			sendMidi( FactoryPagePads.Page6, PadIndex[i], muted[ i ]  ?  Colour.ORANGE : Colour.YELLOW_LOW  );
 		}
@@ -468,45 +460,20 @@ function onMidi(status, data1, data2)
 		// assign those arrows on the right of the control to move around the tracks and devices on the screen
 		if (isChannelController(status)) {
 			if (data2 == 127) {
-				if (!incontrol_mix) {
-			 		switch( data1 ) {
-			  			case SideButton.UP:
-							primaryDevice.previousParameterPage();
-					 		updateIndications();
-							break;
-			  			case SideButton.DOWN:
-							primaryDevice.nextParameterPage();
-							updateIndications();
-							break;
-						case SideButton.LEFT:
-							cursorDevice.selectPrevious();
-							primaryDevice.switchToDevice( DeviceType.ANY, ChainLocation.PREVIOUS);
-							updateIndications();
-					 		break;
-			  			case SideButton.RIGHT:
-							cursorDevice.selectNext();
-							primaryDevice.switchToDevice( DeviceType.ANY, ChainLocation.NEXT);
-							updateIndications();
-							break;
-			 		}
-			  
-				} 
-				else {
-			 		switch( data1 ) {
-			  			case SideButton.UP:
-							trackBank.scrollTracksPageDown();
-							break;
-			  			case SideButton.DOWN:
-							trackBank.scrollTracksPageUp();
-							break;
-			  			case SideButton.LEFT:
-						 	trackBank.scrollTracksUp();
-							break;
-			  			case SideButton.RIGHT:
-							trackBank.scrollTracksDown();
-							break;
+		 		switch( data1 ) {
+		  			case SideButton.UP:
+						trackBank.scrollTracksPageDown();
+						break;
+		  			case SideButton.DOWN:
+						trackBank.scrollTracksPageUp();
+						break;
+		  			case SideButton.LEFT:
+					 	trackBank.scrollTracksUp();
+						break;
+		  			case SideButton.RIGHT:
+						trackBank.scrollTracksDown();
+						break;
 					}
-				}
 			}
 			// Make rest of the knobs not in the Factory bank freely assignable
 			else if (data1 >= LOWEST_CC && data1 <= HIGHEST_CC) {
@@ -533,8 +500,10 @@ function knobIndex( knob )
 	return knob -( isTopRow( knob ) ? 21 : 41 );
 }
 
-function exit() 
+function resetDevice()
 {
+	sendSysex("F0002029020A7708F7");
+
  	sendMidi(0xB0, 0, 0);
  	sendMidi(0xB1, 0, 0);
  	sendMidi(0xB2, 0, 0);
@@ -551,6 +520,11 @@ function exit()
 	sendMidi(0xBD, 0, 0);
 	sendMidi(0xBE, 0, 0);
 	sendMidi(0xBF, 0, 0);
+}
+
+function exit() 
+{
+	resetDevice();
 }
 
 function handleFactory1Pads( pad ) 
@@ -628,15 +602,11 @@ function onSysex(data)
 		if( currentScene >= 12)
 			currentScene = currentScene - 4;
 	  	
-	  	if ( currentScene == Scenes.FACTORY3 ) {
-			mixerAlignedGrid = false;
+	  	if ( currentScene == Scenes.FACTORY3 )
 		  	incontrol_mix = false;		  
-	  	}
 	  
-	  	if ( currentScene == Scenes.FACTORY1 || currentScene == Scenes.FACTORY2 || currentScene == Scenes.FACTORY4) {
-			mixerAlignedGrid = true;
+	  	if ( currentScene == Scenes.FACTORY1 || currentScene == Scenes.FACTORY2 || currentScene == Scenes.FACTORY4)
 			incontrol_mix = true;
-	  	}
 
 		if( currentScene >= 0 && currentScene <= 7 ) {
 			host.showPopupNotification("User " + (currentScene + 1));
