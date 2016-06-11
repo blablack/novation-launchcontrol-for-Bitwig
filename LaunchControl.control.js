@@ -77,21 +77,24 @@ function init()
 	{
 		if (value.equals("Transport/Vol/Pan"))
 		{
-			currentScene = 8;
+			sendSysex("F0002029020A7708F7");
+			setActivePage(8);
 		}
 		else if (value.equals("Mute/Send 1&2"))
 		{
-			currentScene = 9;
+			sendSysex("F0002029020A7709F7");
+			setActivePage(9);
       		}
 		else if (value.equals("Rec/Macro Func/Device Par"))
 		{
-			currentScene = 10;
+			sendSysex("F0002029020A7710F7");
+			setActivePage(10);
       		}
 		else if (value.equals("Create Empty Clip"))
 		{
-			currentScene = 11;
+			sendSysex("F0002029020A7711F7");
+			setActivePage(11);
       		}
-		updateIndications();
 	});
 
 
@@ -597,42 +600,50 @@ function handleFactory4Pads( pad )
 function onSysex(data) 
 {
 	if ( data.substring(0,14) == 'f0002029020a77' ) {
-		currentScene = parseInt( data.substring(14,16), 16);
-
-		if( currentScene >= 12)
-			currentScene = currentScene - 4;
-	  	
-	  	if ( currentScene == Scenes.FACTORY3 )
-		  	incontrol_mix = false;		  
-	  
-	  	if ( currentScene == Scenes.FACTORY1 || currentScene == Scenes.FACTORY2 || currentScene == Scenes.FACTORY4)
-			incontrol_mix = true;
-
-		if( currentScene >= 0 && currentScene <= 7 ) {
-			host.showPopupNotification("User " + (currentScene + 1));
-		}
-		else {
-			switch( currentScene ) {
-				case 8:
-					host.showPopupNotification("Transport, Volumes & Pans");
-					break;
-
-				case 9:
-					host.showPopupNotification("Mutes, Sends 1 & 2");
-					break;
-
-				case 10:
-					host.showPopupNotification("Records, Macros and Devices");
-					break;
-
-				case 11:
-					host.showPopupNotification("Create free slots");
-					break;
-			}
-		}
-
-		updateIndications();
+		setActivePage(parseInt( data.substring(14,16), 16));
 	}
+}
+
+function setActivePage(Page)
+{
+	currentScene = Page;
+
+	if( currentScene >= 12)
+		currentScene = currentScene - 4;
+
+ 	
+  	if ( currentScene == Scenes.FACTORY3 )
+	  	incontrol_mix = false;		  
+
+  
+  	if ( currentScene == Scenes.FACTORY1 || currentScene == Scenes.FACTORY2 || currentScene == Scenes.FACTORY4)
+		incontrol_mix = true;
+
+
+	if( currentScene >= 0 && currentScene <= 7 ) {
+		host.showPopupNotification("User " + (currentScene + 1));
+	}
+	else {
+		switch( currentScene ) {
+			case 8:
+				host.showPopupNotification("Transport, Volumes & Pans");
+				break;
+
+			case 9:
+				host.showPopupNotification("Mutes, Sends 1 & 2");
+				break;
+
+			case 10:
+				host.showPopupNotification("Records, Macros and Devices");
+				break;
+
+			case 11:
+				host.showPopupNotification("Create free slots");
+				break;
+		}
+	}
+
+	updateIndications();
 }
 
 function makeIndexedFunction(index, f) 
