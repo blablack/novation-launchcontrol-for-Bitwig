@@ -1,10 +1,6 @@
 var LOWEST_CC = 21;
 var HIGHEST_CC = 48;
 
-var NUM_TRACKS = 8;
-var NUM_SENDS = 2;
-var NUM_SCENES = 8;
-
 var Pads = {
 	PAD1:9,
 	PAD2:10,
@@ -15,17 +11,6 @@ var Pads = {
 	PAD7:27,
 	PAD8:28
 };
-
-var PadIndex = [
-	Pads.PAD1,
-	Pads.PAD2,
-	Pads.PAD3,
-	Pads.PAD4,
-	Pads.PAD5,
-	Pads.PAD6,
-	Pads.PAD7,
-	Pads.PAD8
-];
 
 var Scenes = {
 	USER1:0,
@@ -46,26 +31,6 @@ var Scenes = {
 	FACTORY8:15
 };
 
-var SideButton = {
-	UP:114,
-	DOWN:115,
-	LEFT:116,
-	RIGHT:117,
-};
-
-/*
-var UserPageKnobs = {
-	Page1:176,
-	Page2:177,
-	Page3:178,
-	Page4:179,
-	Page5:180,
-	Page6:181,
-	Page7:182,
-	Page8:183
-};
-*/
-
 var FactoryPageKnobs = {
 	Page1:184,
 	Page2:185,
@@ -77,32 +42,6 @@ var FactoryPageKnobs = {
 	Page8:191
 };
 
-/*
-var FactoryPageKnobsInverted = {
-	Page1:191,
-	Page2:190,
-	Page3:189,
-	Page4:188,
-	Page5:187,
-	Page6:186,
-	Page7:185,
-	Page8:184
-};
-*/
-
-/*
-var UserPagePads = {
-	Page1:144,
-	Page2:145,
-	Page3:146,
-	Page4:147,
-	Page5:148,
-	Page6:149,
-	Page7:150,
-	Page8:151
-};
-*/
-
 var FactoryPagePads = {
 	Page1:152,
 	Page2:153,
@@ -113,19 +52,6 @@ var FactoryPagePads = {
 	Page7:158,
 	Page8:159
 };
-
-/*
-var FactoryPagePadsInverted = {
-	Page1:159,
-	Page2:158,
-	Page3:157,
-	Page4:156,
-	Page5:155,
-	Page6:154,
-	Page7:153,
-	Page8:152
-};
-*/
 
 var Colour = {
 	OFF:12,
@@ -145,15 +71,4 @@ var Colour = {
 	GREEN_FLASHING:56
 };
 
-/*
-var LED = {
-	GRID:0,
-	CURSORS:1,
-
-	CURSOR_UP:0,
-	CURSOR_DOWN:1,
-	CURSOR_LEFT:2,
-	CURSOR_RIGHT:3
-};
-*/
 
